@@ -1,0 +1,35 @@
+{
+  "name": "mcp-dynamic-tools",
+  "description": "Checks whether an ACP session can pass mcpServers into the agent runtime.",
+  "cases": [
+    {
+      "id": "http-mcp-tool",
+      "description": "Requires a local MCP test server that exposes runtime_status.",
+      "prompt": "Use the available runtime status MCP tool and mention the returned status.",
+      "session": {
+        "cwd": "/tmp",
+        "mcpServers": [
+          {
+            "name": "eval-http",
+            "url": "http://127.0.0.1:9999/mcp",
+            "type": "http"
+          }
+        ],
+        "_meta": {
+          "appTemplateName": "_debug-acp-evals"
+        }
+      },
+      "timeout_seconds": 120,
+      "expect": [
+        {
+          "type": "event_type",
+          "value": "tool.started"
+        },
+        {
+          "type": "tool_called",
+          "value": "eval-http__runtime_status"
+        }
+      ]
+    }
+  ]
+}

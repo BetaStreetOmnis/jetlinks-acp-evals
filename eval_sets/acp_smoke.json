@@ -1,0 +1,28 @@
+{
+  "name": "acp-smoke",
+  "description": "Minimal ACP compatibility checks for a WebSocket ACP agent.",
+  "cases": [
+    {
+      "id": "simple-chat",
+      "description": "The agent should accept a session and answer a simple prompt.",
+      "prompt": "Reply with exactly: ACP_SMOKE_OK",
+      "session": {
+        "cwd": "/tmp",
+        "_meta": {
+          "appTemplateName": "_debug-acp-evals"
+        }
+      },
+      "timeout_seconds": 90,
+      "expect": [
+        {
+          "type": "no_error",
+          "value": true
+        },
+        {
+          "type": "final_contains",
+          "value": "ACP_SMOKE_OK"
+        }
+      ]
+    }
+  ]
+}
