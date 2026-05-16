@@ -1,0 +1,33 @@
+{
+  "name": "jetlinks-agent-smoke",
+  "description": "JetLinks-specific ACP smoke suite using the general app template.",
+  "cases": [
+    {
+      "id": "general-template-chat",
+      "description": "The JetLinks agent should use the configured app template model, not the local placeholder.",
+      "prompt": "请只回复这几个字符：JETLINKS_AGENT_OK",
+      "session": {
+        "cwd": "/tmp",
+        "_meta": {
+          "appTemplateName": "general-jetlinks-assistant"
+        }
+      },
+      "timeout_seconds": 120,
+      "expect": [
+        {
+          "type": "no_error",
+          "value": true
+        },
+        {
+          "type": "json_path_equals",
+          "path": "result.result.metadata.llm_configured",
+          "value": true
+        },
+        {
+          "type": "final_contains",
+          "value": "JETLINKS_AGENT_OK"
+        }
+      ]
+    }
+  ]
+}

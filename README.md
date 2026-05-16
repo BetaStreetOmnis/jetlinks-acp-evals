@@ -50,6 +50,20 @@ uv run acp-evals run \
   --suite eval_sets/acp_smoke.json
 ```
 
+For JetLinks Agent Runtime, use the project-specific suites when the
+`general-jetlinks-assistant` app template is available:
+
+```bash
+uv run acp-evals run \
+  --endpoint ws://127.0.0.1:8010/api/acp/ws \
+  --suite eval_sets/jetlinks_agent_smoke.json
+
+uv run acp-evals run \
+  --endpoint ws://127.0.0.1:8010/api/acp/ws \
+  --suite eval_sets/jetlinks_mcp_dynamic_tools.json \
+  --with-mcp-fixture
+```
+
 Reports are written to:
 
 ```text
@@ -69,9 +83,7 @@ reports/acp-eval.md
       "session": {
         "cwd": "/tmp",
         "mcpServers": [],
-        "_meta": {
-          "appTemplateName": "_debug-acp-evals"
-        }
+        "_meta": {}
       },
       "expect": [
         {
@@ -110,13 +122,28 @@ Supported assertions:
 }
 ```
 
-The harness does not start MCP servers for you yet. Keep MCP fixtures explicit so
-the same suite can run against multiple ACP agents.
+The harness can start a deterministic HTTP MCP fixture for this suite:
+
+```bash
+uv run acp-evals run \
+  --endpoint ws://127.0.0.1:8010/api/acp/ws \
+  --suite eval_sets/mcp_dynamic_tools.json \
+  --with-mcp-fixture
+```
+
+The fixture listens on `127.0.0.1:8765/mcp` and exposes one tool:
+
+```text
+runtime_status -> {"status": "MCP_FIXTURE_OK", "source": "acp-evals"}
+```
+
+Keep fixture URLs explicit in eval sets so the same suite can also run against
+external MCP servers in CI or staging.
 
 ## Roadmap
 
 - ACP lifecycle suite: `load`, `fork`, `resume`, `cancel`, modes, config options.
-- MCP fixtures: local HTTP and stdio MCP test servers.
+- MCP fixtures: stdio MCP test server.
 - Coding fixtures: single-file, multi-file, large-file patch, and real-repo tasks.
 - Browser E2E: Workbench send message, upload file, event inspector.
 - Trace export: OpenTelemetry output for `agentevals`.

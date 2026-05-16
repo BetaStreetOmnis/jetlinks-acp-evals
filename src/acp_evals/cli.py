@@ -7,6 +7,7 @@ import click
 from rich.console import Console
 from rich.table import Table
 
+from acp_evals.mcp_fixture import run_mcp_fixture
 from acp_evals.runner import load_suite, run_suite, write_json_report, write_markdown_report
 
 console = Console()
@@ -23,6 +24,12 @@ def main() -> None:
 @click.option("--header", multiple=True, help="HTTP header in Name:Value form. May be repeated.")
 @click.option("--concurrency", default=1, show_default=True, type=int)
 @click.option(
+    "--with-mcp-fixture",
+    is_flag=True,
+    help="Start a local HTTP MCP fixture at 127.0.0.1:8765/mcp.",
+)
+@click.option("--mcp-fixture-port", default=8765, show_default=True, type=int)
+@click.option(
     "--json-report",
     type=click.Path(path_type=Path),
     default=Path("reports/acp-eval.json"),
@@ -33,15 +40,24 @@ def run_command(
     suite_path: Path,
     header: tuple[str, ...],
     concurrency: int,
+    with_mcp_fixture: bool,
+    mcp_fixture_port: int,
     json_report: Path,
     md_report: Path,
 ) -> None:
     """Run an eval suite against an ACP agent endpoint."""
     headers = _parse_headers(header)
     suite = load_suite(suite_path)
-    result = asyncio.run(
-        run_suite(suite, endpoint=endpoint, headers=headers, concurrency=concurrency)
-    )
+    if with_mcp_fixture:
+        with run_mcp_fixture(port=mcp_fixture_port) as fixture:
+            console.print(f"Started MCP fixture at {fixture.url}")
+            result = asyncio.run(
+                run_suite(suite, endpoint=endpoint, headers=headers, concurrency=concurrency)
+            )
+    else:
+        result = asyncio.run(
+            run_suite(suite, endpoint=endpoint, headers=headers, concurrency=concurrency)
+        )
     write_json_report(result, json_report)
     write_markdown_report(result, md_report)
     _print_summary(result)

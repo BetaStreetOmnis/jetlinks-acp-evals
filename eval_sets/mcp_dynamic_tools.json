@@ -11,13 +11,11 @@
         "mcpServers": [
           {
             "name": "eval-http",
-            "url": "http://127.0.0.1:9999/mcp",
+            "url": "http://127.0.0.1:8765/mcp",
             "type": "http"
           }
         ],
-        "_meta": {
-          "appTemplateName": "_debug-acp-evals"
-        }
+        "_meta": {}
       },
       "timeout_seconds": 120,
       "expect": [
@@ -28,6 +26,10 @@
         {
           "type": "tool_called",
           "value": "eval-http__runtime_status"
+        },
+        {
+          "type": "final_contains",
+          "value": "MCP_FIXTURE_OK"
         }
       ]
     }

@@ -1,0 +1,48 @@
+{
+  "name": "jetlinks-mcp-dynamic-tools",
+  "description": "JetLinks-specific dynamic MCP tool suite using the general app template.",
+  "cases": [
+    {
+      "id": "general-template-http-mcp-tool",
+      "description": "The JetLinks agent should discover and call a session-scoped HTTP MCP tool.",
+      "prompt": "请调用 runtime_status 工具，并在最终回答中包含工具返回的 status 原文。",
+      "session": {
+        "cwd": "/tmp",
+        "mcpServers": [
+          {
+            "name": "eval-http",
+            "url": "http://127.0.0.1:8765/mcp",
+            "type": "http"
+          }
+        ],
+        "_meta": {
+          "appTemplateName": "general-jetlinks-assistant"
+        }
+      },
+      "timeout_seconds": 180,
+      "expect": [
+        {
+          "type": "no_error",
+          "value": true
+        },
+        {
+          "type": "json_path_equals",
+          "path": "result.result.metadata.llm_configured",
+          "value": true
+        },
+        {
+          "type": "event_type",
+          "value": "tool.started"
+        },
+        {
+          "type": "tool_called",
+          "value": "eval-http__runtime_status"
+        },
+        {
+          "type": "final_contains",
+          "value": "MCP_FIXTURE_OK"
+        }
+      ]
+    }
+  ]
+}

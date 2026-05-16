@@ -8,9 +8,7 @@
       "prompt": "Reply with exactly: ACP_SMOKE_OK",
       "session": {
         "cwd": "/tmp",
-        "_meta": {
-          "appTemplateName": "_debug-acp-evals"
-        }
+        "_meta": {}
       },
       "timeout_seconds": 90,
       "expect": [
